@@ -13,5 +13,5 @@ MODULES=(
 # 附加的文件路径 数量必须和上面的Modules对应  没有附加传 "" 既可
 ATTACH_DIR_PATH=(
 	"GithubTest/PPTestComponent/" 
-	"Component/Kit/"
+	""
 	)

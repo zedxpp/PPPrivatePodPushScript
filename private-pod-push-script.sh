@@ -1,4 +1,4 @@
-# 调用配置文件
+# 调用配置文件   也可以向前向后配置路径如  . ./..//config.sh
 . ./config.sh
 
 function log_line()
