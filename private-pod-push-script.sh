@@ -1,4 +1,5 @@
 # 调用配置文件   也可以向前向后配置路径如  . ./..//config.sh
+#. ./..//config.sh
 . ./config.sh
 
 function log_line()
@@ -62,8 +63,7 @@ done
 log_line
 
 # 获取输入的组件编号
-echo "请输入组件编号:"
-read READ_INDEX
+read -p "请输入组件编号: " READ_INDEX
 
 # 输入的数值-1转换成数组需要的角标
 INDEX=`expr $READ_INDEX - 1`
@@ -133,8 +133,7 @@ echo "组件仓库最后一次提交的标签版本号是 $(git describe --tags 
 log_line
 
 
-echo "请输入需要设置的版本号"
-read parameter
+read -p "请输入需要设置的版本号: " parameter
 NEW_VERSION="$parameter"
 # echo "输入的版本号是 ${NEW_VERSION} "
 
@@ -152,8 +151,8 @@ sed -i '' "s/${OID_TMP_STRING}/${NEW_TMP_STRING}/g" $PODSPEC_PATH
 echo "原版本号${OID_VERSION} 修改后的版本号${NEW_VERSION}"
 
 
-echo "====请输入提交注释===="
-read parameter
+# echo "====请输入提交注释===="
+read -p "请输入需要提交的注释内容: " parameter
 READ_NEW_VERSION="$parameter"
 
 # 如果没有输入注释 那么默认注释是podspec文件版本号
@@ -199,8 +198,7 @@ do
     fi
 done 
 
-echo "请输入需要Push到的文件夹编号"
-read REPO_INDEX
+read -p "请输入需要Push到的文件夹编号: " REPO_INDEX
 REPO_INDEX=`expr $REPO_INDEX - 1`
 # echo ${ALL_REPO_DIR_NAME[${REPO_INDEX}]}
 # echo ${PODSPEC_PATH}
