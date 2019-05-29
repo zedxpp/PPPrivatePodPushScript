@@ -219,39 +219,76 @@ git push
 echo "====Push完成===="
 log_line
 
-# 默认忽略cocoapods的公有文件夹
-echo_success "检索到以下文件夹, 已忽略"master"文件夹"
 ALL_REPO_DIR_NAME=()
 # IS_DIR=false
 COCOAPODS_PATH=~/.cocoapods/repos/
-REPO_DIR_PATH=
-for dir in $(ls $COCOAPODS_PATH)
+REPO_NAME=
+IS_EXISTS_DEFAULT_REPO=false
+TMP_LOG_FILE="tmpLog.txt"
+
+if [ ${#DEFAULT_REPO_DIR_NAME} != 0 ] && [ -d "${COCOAPODS_PATH}${DEFAULT_REPO_DIR_NAME}" ] ; then
+	IS_EXISTS_DEFAULT_REPO=true
+fi
+
+if [[ $IS_EXISTS_DEFAULT_REPO == false ]]; then
+	# 默认忽略cocoapods的公有文件夹
+	echo_success "检索到以下文件夹, 已忽略"master"文件夹"
+	REPO_DIR_PATH=
+	for dir in $(ls $COCOAPODS_PATH)
+	do
+	    # [ -d $dir ] && echo $dir
+	    REPO_DIR_PATH=${COCOAPODS_PATH}${dir}
+	    if [ -d $REPO_DIR_PATH ] && [ $dir != master ] ; then
+	        # IS_DIR=true
+	        # else
+	        # IS_DIR=false
+	        ALL_REPO_DIR_NAME+=($dir)
+	        echo ${#ALL_REPO_DIR_NAME[*]}. $dir
+	        # echo  $dir $IS_DIR
+	        # echo $dir
+	    fi
+	done 
+
+	# read -p "输入需要Push到的文件夹编号: " REPO_INDEX
+	circle_input "输入需要Push到的文件夹编号: "
+
+	REPO_INDEX=`expr $INPUT_NUMBER - 1`
+	INPUT_NUMBER=
+	# echo ${ALL_REPO_DIR_NAME[${REPO_INDEX}]}
+	# echo ${PODSPEC_PATH}
+	REPO_NAME=${ALL_REPO_DIR_NAME[${REPO_INDEX}]}
+else
+	REPO_NAME=$DEFAULT_REPO_DIR_NAME
+	echo_success "读取到默认push repo文件夹 (${REPO_NAME})"
+	
+fi
+
+pod repo push ${REPO_NAME} ${PODSPEC_PATH} ${PUSH_REPO_SOURCE} --allow-warnings --verbose --use-libraries | tee ${TMP_LOG_FILE}
+
+COUNT=0
+TOTAL_COUNT=3
+
+while read TMP_LINE
 do
-    # [ -d $dir ] && echo $dir
-    REPO_DIR_PATH=${COCOAPODS_PATH}${dir}
-    if [ -d $REPO_DIR_PATH ] && [ $dir != master ] ; then
-        # IS_DIR=true
-        # else
-        # IS_DIR=false
-        ALL_REPO_DIR_NAME+=($dir)
-        echo ${#ALL_REPO_DIR_NAME[*]}. $dir
-        # echo  $dir $IS_DIR
-        # echo $dir
-    fi
-done 
+if [[ ${TMP_LINE} == "Adding the spec to the \`${REPO_NAME}' repo" || ${TMP_LINE} == "- [Update] ${PODSPEC_NAME} (${NEW_VERSION})" || ${TMP_LINE} == "Pushing the \`${REPO_NAME}' repo" ]]; then
 
-# read -p "输入需要Push到的文件夹编号: " REPO_INDEX
-circle_input "输入需要Push到的文件夹编号: "
+COUNT=`expr ${COUNT} + 1`
 
-REPO_INDEX=`expr $INPUT_NUMBER - 1`
-INPUT_NUMBER=
-# echo ${ALL_REPO_DIR_NAME[${REPO_INDEX}]}
-# echo ${PODSPEC_PATH}
+fi
+done < $TMP_LOG_FILE
 
-pod repo push ${ALL_REPO_DIR_NAME[${REPO_INDEX}]} ${PODSPEC_PATH} ${PUSH_REPO_SOURCE} --allow-warnings --verbose --use-libraries
+rm $TMP_LOG_FILE
 
-echo_success "用时: ${SECONDS}s"
-echo_success "${PODSPEC_NAME} (${BRANCH_NAME}) 组件 ${NEW_VERSION} 版本 已提交到 ${ALL_REPO_DIR_NAME[${REPO_INDEX}]}"
+if [[ ${COUNT} == ${TOTAL_COUNT} ]]; then
+	echo_success "推送成功!!!!"
+	echo_success "用时: ${SECONDS}s"
+	echo_success "${PODSPEC_NAME} (${BRANCH_NAME}) 组件 ${NEW_VERSION} 版本 已提交到 ${REPO_NAME}"
+else
+	echo_warning "推送失败, 请检查!!!!"
+fi
+
+
+
 # echo_success "${READ_NEW_VERSION}"
 
 

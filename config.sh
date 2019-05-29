@@ -1,3 +1,6 @@
+# 默认推送的仓库名称 必须设置有效的文件夹名称才会生效 获取方式 cd ~/.cocoapods/repos/
+readonly DEFAULT_REPO_DIR_NAME=""
+
 # 工作路径
 readonly WORK_DIR="/Users/pengpeng/Desktop/"
 readonly SUFFIX=".podspec"
