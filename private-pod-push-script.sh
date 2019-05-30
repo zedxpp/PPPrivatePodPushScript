@@ -219,13 +219,17 @@ git push
 echo "====Push完成===="
 log_line
 
+# 所有仓库目录名的数组
 ALL_REPO_DIR_NAME=()
 # IS_DIR=false
 COCOAPODS_PATH=~/.cocoapods/repos/
 REPO_NAME=
+# 是否设置默认推送仓库目录
 IS_EXISTS_DEFAULT_REPO=false
-TMP_LOG_FILE="tmpLog.txt"
+# push 记录写入的文件  判断完成后会删除
+TMP_LOG_FILE="pppsTmpLog.txt"
 
+# 判断是否设置了默认推送仓库目录名, 并且目录名是真实存在
 if [ ${#DEFAULT_REPO_DIR_NAME} != 0 ] && [ -d "${COCOAPODS_PATH}${DEFAULT_REPO_DIR_NAME}" ] ; then
 	IS_EXISTS_DEFAULT_REPO=true
 fi
@@ -268,6 +272,7 @@ pod repo push ${REPO_NAME} ${PODSPEC_PATH} ${PUSH_REPO_SOURCE} --allow-warnings 
 COUNT=0
 TOTAL_COUNT=3
 
+# 对写入到临时文件的内容进行逐行判断, 满足3个条件表示推送成功
 while read TMP_LINE
 do
 if [[ ${TMP_LINE} == "Adding the spec to the \`${REPO_NAME}' repo" || ${TMP_LINE} == "- [Update] ${PODSPEC_NAME} (${NEW_VERSION})" || ${TMP_LINE} == "Pushing the \`${REPO_NAME}' repo" ]]; then
@@ -277,8 +282,10 @@ COUNT=`expr ${COUNT} + 1`
 fi
 done < $TMP_LOG_FILE
 
+# 移除临时的目录
 rm $TMP_LOG_FILE
 
+# 推送成功和推送失败的提示不一样
 if [[ ${COUNT} == ${TOTAL_COUNT} ]]; then
 	echo_success "推送成功!!!!"
 	echo_success "用时: ${SECONDS}s"
