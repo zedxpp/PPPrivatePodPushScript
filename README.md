@@ -30,6 +30,7 @@
 3. 在终端输入`sh private-pod-push-script.sh`执行脚本.
 
 ~~3. 在终端输入`chmod +x private-pod-push-script.sh`, 给`private-pod-push-script.sh`文件增加可执行权限. (此步骤只需要执行一次).~~
+
 ~~4. 然后输入`./private-pod-push-script.sh`既可执行脚本.~~
 
  - 自动获取你配置的所有组件, 根据编号排序, `输入你想提交的组件编号`.
@@ -37,8 +38,6 @@
  - `选择你想push到的主仓库名称`, 如果验证成功的情况下, 所有流程已完成.
  
  ### 做好前期的配置后, 以后只需要cd到脚本所在的文件目录下, 执行第4步中的操作即可.
-
- ![](pic/pic_push.png)
  
 ## 目前完成的功能
 
