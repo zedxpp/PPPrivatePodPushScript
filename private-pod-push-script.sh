@@ -71,6 +71,9 @@ function file_exists()
 	fi
 }
 
+# 脚本所在目录
+SCRIPT_PATH=$(pwd)
+
 # 遍历所有组件名 判断文件是否存在 并展示
 MODULES_COUNT=${#MODULES[*]}
 NO=0
@@ -226,8 +229,9 @@ COCOAPODS_PATH=~/.cocoapods/repos/
 REPO_NAME=
 # 是否设置默认推送仓库目录
 IS_EXISTS_DEFAULT_REPO=false
+
 # push 记录写入的文件  判断完成后会删除
-TMP_LOG_FILE="pppsTmpLog.txt"
+TMP_LOG_FILE="${SCRIPT_PATH}/pppsTmpLog.txt"
 
 # 判断是否设置了默认推送仓库目录名, 并且目录名是真实存在
 if [ ${#DEFAULT_REPO_DIR_NAME} != 0 ] && [ -d "${COCOAPODS_PATH}${DEFAULT_REPO_DIR_NAME}" ] ; then
@@ -254,7 +258,7 @@ if [[ $IS_EXISTS_DEFAULT_REPO == false ]]; then
 	done 
 
 	# read -p "输入需要Push到的文件夹编号: " REPO_INDEX
-	circle_input "输入需要Push到的文件夹编号: "
+	circle_input "输入需要Push到的目标文件夹编号: "
 
 	REPO_INDEX=`expr $INPUT_NUMBER - 1`
 	INPUT_NUMBER=
