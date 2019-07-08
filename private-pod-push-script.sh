@@ -2,6 +2,20 @@
 #. ./..//config.sh
 . ./config.sh
 
+#打印时间
+function displaysecs() {
+    local T=$1
+    local D=$((T/60/60/24))
+    local H=$((T/60/60%24))
+    local M=$((T/60%60))
+    local S=$((T%60))
+    (( $D > 0 )) && printf '%d days ' $D
+    (( $H > 0 )) && printf '%d hours ' $H
+    (( $M > 0 )) && printf '%d minutes ' $M
+    (( $D > 0 || $H > 0 || $M > 0 )) && printf 'and '
+    printf '%d seconds\n' $S
+}
+
 # 打印红色的文本内容 出现异常时打印
 function echo_warning()
 {
@@ -292,7 +306,8 @@ rm $TMP_LOG_FILE
 # 推送成功和推送失败的提示不一样
 if [[ ${COUNT} == ${TOTAL_COUNT} ]]; then
 	echo_success "推送成功!!!!"
-	echo_success "用时: ${SECONDS}s"
+#    echo_success "用时: ${SECONDS}s"
+    echo_success "用时: $(displaysecs ${SECONDS})"
 	echo_success "${PODSPEC_NAME} (${BRANCH_NAME}) 组件 ${NEW_VERSION} 版本 已提交到 ${REPO_NAME}"
 else
 	echo_warning "推送失败, 请检查!!!!"
